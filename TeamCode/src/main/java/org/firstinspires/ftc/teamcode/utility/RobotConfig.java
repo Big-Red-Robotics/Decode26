@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 
 @Config
 public class RobotConfig {
@@ -21,8 +22,11 @@ public class RobotConfig {
     public static String beltMotor = "Mb";
 
     public static String pushingUpServo = "pS";
-    public static String backSpinServoL = "sL", backspinservoR = "sR";
-    public static String spindexter = "spindexter";
+
+
+    public static String pushingBeltServo = "pB"; //the one that will push it in the spindexter
+    public static String angleHoodServoL = "sL", angleHoodServoR = "sR";
+    public static String spindexterServoLeft = "ssL", spindexterServoRight = "ssR", spindexterServoBack = "ssB";
     public static String turret = "turret";
     public static String imu = "imu";
     public static String colorSensor = "color sensor"; //in the spindexter

@@ -13,9 +13,9 @@ import java.util.List;
 public class MyShooterOne {
     private DcMotor beltMotor, flyingWheelMotor;
     private Servo pushingUpServo;
-    List<DcMotor> shooterOneMotors;
+    List<DcMotor> shooterOneMotors;//and servo
 
-    public enum MyShooterOneState {none, movingBelt, pushBallUp, shoot}
+    public enum MyShooterOneState {none, belt, push, shoot}
 
     ;
     public MyShooterOneState currentState = MyShooterOneState.none;
@@ -32,6 +32,37 @@ public class MyShooterOne {
             shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         beltMotor.setDirection(DcMotorSimple.Direction.REVERSE);//???
-        flyingWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);//???
+        flyingWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);//???
+    }
+
+    public void setState(MyShooterOneState state) {
+        currentState = state;
+    }
+
+    public void setShooterOneShoot(double power) {
+        setState((MyShooterOneState.none));
+
+        flyingWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);//???
+        beltMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        flyingWheelMotor.setPower(power);
+        beltMotor.setPower(power);
+
+        flyingWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        beltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void servoRest() {
+        pushingUpServo.setPosition(0.0); //???
+    }
+
+    public void pushingUp() {
+        pushingUpServo.setPosition(1.0); //???
+    }
+
+    public void update() {
+        for (DcMotor shooter : shooterOneMotors) {//and servo!
+
+        }
     }
 }

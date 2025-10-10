@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode; //DONE
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
@@ -46,19 +46,21 @@ public class MyIntake {
     }
 
     public void setIntakePowers(double power) {
+        setState(IntakeState.pause);
+
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE); //???
         intakeMotor.setPower(power);//???
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    //add another public void for the beam breaker
+
     public void update() {
-        for (DcMotor intake : intakeMechanism) {
-            if (beamBreakerSensor.getState() == true) {
-                setState(IntakeState.intake);
-            } else if (beamBreakerSensor.getState() == false) {
-                setState(IntakeState.pause);
-            }
+        if (!beamBreakerSensor.getState()) {
+            setState(IntakeState.intake);
+            setIntakePowers(1.0); //???
+        } else {
+            setState(IntakeState.pause);
+            setIntakePowers(0.0);
         }
     }
 }
