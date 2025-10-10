@@ -13,7 +13,14 @@ public class RobotConfig {
 
     public static String motorFL = "mFL", motorBL = "mBL", motorFR = "mFR", motorBR = "mBR";
     public static String intake = "mi";
-    public static String shooterMotorL = "sL", shootermotorR = "sR";
+    public static String shooterMotorL = "sL";
+
+    public static String shooterMotorR = "sR";
+
+    public static String flyingWheelMotor = "fM";
+    public static String beltMotor = "Mb";
+
+    public static String pushingUpServo = "pS";
     public static String backSpinServoL = "sL", backspinservoR = "sR";
     public static String spindexter = "spindexter";
     public static String turret = "turret";

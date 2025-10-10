@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.RobotConfigNameable;
 
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class MyIntake {
     private DcMotor intakeMotor;
-    private Sensor beamBreakerSensor;
+    private DigitalChannel beamBreakerSensor;
 
     public enum IntakeState {intake, pause}
 
@@ -28,6 +29,8 @@ public class MyIntake {
 
     public MyIntake(HardwareMap hardwareMap) {
         this.intakeMotor = hardwareMap.get(DcMotor.class, RobotConfig.intake);
+        this.beamBreakerSensor = hardwareMap.get(DigitalChannel.class, RobotConfig.beamBreaker);
+        beamBreakerSensor.setMode(DigitalChannel.Mode.INPUT);
 
         intakeMechanism = Arrays.asList(intakeMotor);
         for (DcMotor intake : intakeMechanism) {
@@ -42,7 +45,7 @@ public class MyIntake {
         currentState = state;
     }
 
-    public void setIntakePower(double power) {
+    public void setIntakePowers(double power) {
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE); //???
         intakeMotor.setPower(power);//???
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -50,7 +53,12 @@ public class MyIntake {
 
     //add another public void for the beam breaker
     public void update() {
-        for (DcMotor intake : intakeMechanism) {//work on this
+        for (DcMotor intake : intakeMechanism) {
+            if (beamBreakerSensor.getState() == true) {
+                setState(IntakeState.intake);
+            } else if (beamBreakerSensor.getState() == false) {
+                setState(IntakeState.pause);
+            }
         }
     }
 }
