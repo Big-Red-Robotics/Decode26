@@ -11,7 +11,6 @@ public class RobotConfig {
     public static TeamColor teamColor = TeamColor.BLUE; //or RED
     public static InitialSide initialSide = InitialSide.LEFT; //or RIGHT
 
-
     public static String motorFL = "mFL", motorBL = "mBL", motorFR = "mFR", motorBR = "mBR";
     public static String intake = "mi";
     public static String shooterMotorL = "sL";

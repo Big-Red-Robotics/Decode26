@@ -35,23 +35,6 @@ public class MyVision {
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
     }
 
-    public void processAprilTags() {
-        // Get the current fiducial (AprilTag) target from Limelight
-        LimelightTarget_Fiducial target = limelight.getFiducialTarget();
 
-        // Check that a valid target is detected
-        if (target != null && target.isValid()) {
-            int tagId = target.getFiducialId();
-
-            // Match against known tag IDs
-            switch (tagId) {
-                case 7:
-                    // triggerSomething();
-                    break;
-                case 3:
-                    // doSomethingElse();
-                    break;
-            }
-        }
     }
-}
+
