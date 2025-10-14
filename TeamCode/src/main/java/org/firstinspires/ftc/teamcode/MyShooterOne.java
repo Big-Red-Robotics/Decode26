@@ -104,5 +104,8 @@ public class MyShooterOne {
         pushingUpServo.setPosition(1.0); //???
     }
 
+    public void setIntakeMechanism() {
+
+    }
 }
 //states intake, none, belt, push, shoot do a public void for each through active state to be able to do them parralelly
