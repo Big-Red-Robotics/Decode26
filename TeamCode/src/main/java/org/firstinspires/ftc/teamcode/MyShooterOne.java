@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -12,40 +16,36 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-public class MyShooterOne {
+public class MyShooterOne implements Action {
+
+    // Motors and servo
     private DcMotor beltMotor, flyingWheelMotor;
-    private Servo pushingUpServo;
-    List<DcMotor> shooterOneMotors;//and servo
+    //private Servo pushingUpServo;
 
-
-    //intake
+    //Intake motors and sensors
     private DcMotor intakeMotor;
     private DigitalChannel beamBreakerSensor;
 
-    public enum IntakeState {intake, pause}
+    // Groupings for convenience
+    private List<DcMotor> shooterOneMotors;
+    private List<DcMotor> intakeMechanism;
 
-    ;
-    public MyIntake.IntakeState currentState = MyIntake.IntakeState.pause;
-    public boolean intake = false;
-    List<DcMotor> intakeMechanism;
+    // States for intake
+    // public enum IntakeState {intake, pause}
+    //public MyIntake.IntakeState currentIntakeState = MyIntake.IntakeState.pause;
 
+    // Shooter states
+    public enum MyShooterOneState {intake, none, belt, shoot}
 
-    public enum MyShooterOneState {intake, none, belt, push, shoot}
-
-    ;
-
-    public EnumSet<MyShooterOneState> activeOneStates = EnumSet.of(MyShooterOneState.none,
-            MyShooterOneState.belt, MyShooterOneState.push, MyShooterOneState.shoot);
-
+    public EnumSet<MyShooterOneState> activeOneStates = EnumSet.of(MyShooterOneState.none);
 
 
     public MyShooterOne(HardwareMap hardwareMap) {
         this.beltMotor = hardwareMap.get(DcMotor.class, RobotConfig.beltMotor);
         this.flyingWheelMotor = hardwareMap.get(DcMotor.class, RobotConfig.flyingWheelMotor);
-        this.pushingUpServo = hardwareMap.get(Servo.class, RobotConfig.pushingUpServo);
 
 
-//intake
+        // Initialize intake hardware
         this.intakeMotor = hardwareMap.get(DcMotor.class, RobotConfig.intake);
         this.beamBreakerSensor = hardwareMap.get(DigitalChannel.class, RobotConfig.beamBreaker);
         beamBreakerSensor.setMode(DigitalChannel.Mode.INPUT);
@@ -56,7 +56,7 @@ public class MyShooterOne {
             shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-//intake
+
         intakeMechanism = Arrays.asList(intakeMotor);
         for (DcMotor intake : intakeMechanism) {
             intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -64,48 +64,62 @@ public class MyShooterOne {
             intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        beltMotor.setDirection(DcMotorSimple.Direction.REVERSE);//???
-        flyingWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);//???
-
-        //intake
-        intakeMotor.setDirection(DcMotor.Direction.REVERSE); //idk if its actually inverse or FORWARD
+        //adjust
+        beltMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        flyingWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void setActiveOneStatesState(EnumSet<MyShooterOneState> states) {
+
+    public void setActiveOneStates(EnumSet<MyShooterOneState> states) {
         this.activeOneStates = EnumSet.copyOf(states);
     }
 
-    public void setIntakePowers(double power) {
-        activeOneStates.add(MyShooterOneState.none);
-
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE); //???
-        intakeMotor.setPower(power);//???
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    public Action addState(MyShooterOneState state) {
+        this.activeOneStates.add(state);
+        return null;
     }
 
-    public void setShooterOneShoot(double power) {
-        activeOneStates.add(MyShooterOneState.none);
+    public void removeState(MyShooterOneState state) {
+        this.activeOneStates.remove(state);
+    }
 
-        flyingWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);//???
-        beltMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+    public void setIntakePower(double power) {
+        intakeMotor.setPower(power);
+    }
 
+    public void setShooterPower(double power) {
         flyingWheelMotor.setPower(power);
         beltMotor.setPower(power);
-
-        flyingWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        beltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void servoRest() {
-        pushingUpServo.setPosition(0.0); //???
+
+    @Override
+    public boolean run(@NonNull TelemetryPacket packet) {
+        // Handle intake state
+        if (activeOneStates.contains(MyShooterOneState.intake)) {
+            setIntakePower(1.0); // full power intake - adjust as needed
+        } else {
+            setIntakePower(0.0);
+        }
+
+        if (activeOneStates.contains(MyShooterOneState.belt)) {
+            beltMotor.setPower(1.0);
+        } else {
+            beltMotor.setPower(0.0);
+        }
+
+        if (activeOneStates.contains(MyShooterOneState.shoot)) {
+            flyingWheelMotor.setPower(1.0);
+        } else {
+            flyingWheelMotor.setPower(0.0);
+        }
+
+
+        packet.put("Active States", activeOneStates.toString());
+        packet.put("Beam Breaker", beamBreakerSensor.getState());
+
+        return false;
     }
 
-    public void pushingUp() {
-        pushingUpServo.setPosition(1.0); //???
-    }
-
-    public void setIntakeMechanism() {
-
-    }
 }
-//states intake, none, belt, push, shoot do a public void for each through active state to be able to do them parralelly

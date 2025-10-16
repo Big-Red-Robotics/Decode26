@@ -35,10 +35,6 @@ public class TestAutonOne extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        MecanumDrive chassis = new MecanumDrive(hardwareMap);
-        MyIntake intake = new MyIntake(hardwareMap);
-        MyVision vision = new MyVision(hardwareMap);
-        MyShooterOne shooterone = new MyShooterOne(hardwareMap);
 
     }
 }
