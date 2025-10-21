@@ -53,6 +53,10 @@ import java.util.List;
 
 @Config
 public final class MecanumDrive {
+    public Pose2d getPoseEstimate() { // THIS IS FOR VISION DO NOT TOUCH NEED THIS FOR LATER
+        return null;
+    }
+
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on

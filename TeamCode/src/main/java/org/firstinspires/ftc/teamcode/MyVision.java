@@ -1,23 +1,30 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.utility.RobotConfig.imu;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-//april tag recognition DONEEEEEEE
+import com.qualcomm.robotcore.hardware.IMU;
+//TO DO:
+// line 100 do the initial poses with the limelight
+//do the remembering the pattern from the cases 21-23
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.autonomous.FirstRoadRunnerAuton;
 
 import java.util.EnumSet;
@@ -26,15 +33,16 @@ import java.util.Vector;
 
 public class MyVision {
     private Limelight3A limelight;
+    private IMU imu;
     private int rememberTagID;
     private DcMotor beltMotor, flyingWheelMotor;
 
-
-
-
-
-
     public enum MyVisionState {none, pattern, goal}
+
+    // Limelight calibration values (tune these for your robot)
+    private final double limelightMountAngleDegrees = 25.0; //var?
+    private final double limelightLensHeightInches = 20.0; //var?
+    private final double tagHeightInches = 60.0; //var?
 
     ;
 
@@ -46,6 +54,13 @@ public class MyVision {
         limelight.setPollRateHz(100); // 100 times per second
         limelight.start();
         limelight.pipelineSwitch(8); // ???
+
+        imu = hardwareMap.get(IMU.class, "imu"); // field orientation through imu
+        RevHubOrientationOnRobot revHubOrientationOnRobot =
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.FORWARD, //var?
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD); //var?
+        imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
     }
 
     public void setActiveStatesMyVisionStates(EnumSet<MyVisionState> states) {
@@ -58,6 +73,8 @@ public class MyVision {
 
 
         LLResult result = limelight.getLatestResult();
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        limelight.updateRobotOrientation(orientation.getYaw());
 
         if (result != null && result.isValid()) {
             List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
@@ -99,53 +116,85 @@ public class MyVision {
             telemetry.addData("Limelight", "No Targets");
         }
 
-    abstract class GoToBlue implements Action {
+    public class GoToBlue implements Action {
         private boolean initialized = false;
+
 
         public void run() { // do the initial pose (get it throught the pose 3d limelight) but otherwise done
             MyShooterOne myShooterOne = new MyShooterOne(hardwareMap);
+            //MecanumDrive mecanumDrive = new MecanumDrive(HardwareMap hardwareMap);
             activeStates.add(MyVisionState.goal);
+
+            LLResult llResult = limelight.getLatestResult();
+            if (llResult != null && llResult.isValid()) {
+                Pose3D botPose = llResult.getBotpose_MT2();
+                double tx = botPose.getPosition().x; // horizontal offset (degrees)
+                double ty = botPose.getPosition().y; // vertical offset (degrees)
+
+                double xInches = tx * 39.3701; //convertion to the roadrunner
+                double yInches = ty * 39.3701;
+
+                double yawDegrees = botPose.getOrientation().getYaw();
+                double yawRadians = Math.toRadians(yawDegrees);
+
+                Pose2d rrPose = new Pose2d(xInches, yInches, yawRadians);
+
+
+                // distance calculation using the angle (limelight documentation)
+                double angleToGoalDegrees = limelightMountAngleDegrees + ty;
+                double angleToGoalRadians = Math.toRadians(angleToGoalDegrees); //convertion to radians
+                double distanceInches = (tagHeightInches - limelightLensHeightInches) /
+                        Math.tan(angleToGoalRadians);
+            }
+
             MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
+
             if (!initialized) {
                 if (rememberTagID == 20) {
                     telemetry.addLine("Going to Blue target!");
                     telemetry.update();
+                    Pose2d currentPose = drive.getPoseEstimate();
 
                     com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
                             drive.actionBuilder(new Pose2d(0, 0, 0))
                                     .splineTo(new Vector2d(36, 36), Math.PI / 2)
                                     .build());
-                    //customiz
+                    //customizable
                     Actions.runBlocking(myShooterOne.addState(MyShooterOne.MyShooterOneState.belt));
                     Actions.runBlocking(myShooterOne.addState(MyShooterOne.MyShooterOneState.shoot));
                 }
             }
         }
 
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            return false;
+        }
     }
 
-    /* abstract class GoToRed implements Action {
-        private boolean initialized = false;
+            /* abstract class GoToRed implements Action {
+                private boolean initialized = false;
 
-        public void run() {
-            MyShooterOne myShooterOne = new MyShooterOne(hardwareMap);
-            activeStates.add(MyVisionState.goal);
-            MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-            if (!initialized) {
-                if (rememberTagID == 20) {
-                    telemetry.addLine("Going to Blue target!");
-                    telemetry.update();
+                public void run() {
+                    MyShooterOne myShooterOne = new MyShooterOne(hardwareMap);
+                    activeStates.add(MyVisionState.goal);
+                    MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                    if (!initialized) {
+                        if (rememberTagID == 20) {
+                            telemetry.addLine("Going to Blue target!");
+                            telemetry.update();
 
-                    com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
-                            drive.actionBuilder(new Pose2d(0, 0, 0))
-                                    .splineTo(new Vector2d(-36, 36), Math.PI/2)
-                                    .build());
-                    //customiz
-                    Actions.runBlocking(myShooterOne.addState(MyShooterOne.MyShooterOneState.belt));
-                    Actions.runBlocking(myShooterOne.addState(MyShooterOne.MyShooterOneState.shoot));
+                            com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
+                                    drive.actionBuilder(new Pose2d(0, 0, 0))
+                                            .splineTo(new Vector2d(-36, 36), Math.PI/2)
+                                            .build());
+                            //customizable
+                            Actions.runBlocking(myShooterOne.addState(MyShooterOne.MyShooterOneState.belt));
+                            Actions.runBlocking(myShooterOne.addState(MyShooterOne.MyShooterOneState.shoot));
+                        }
+                    }
                 }
-            }
-        }
 
-    }*/
+            }*/
 }
