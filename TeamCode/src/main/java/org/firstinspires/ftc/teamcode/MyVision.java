@@ -102,7 +102,7 @@ public class MyVision {
     abstract class GoToBlue implements Action {
         private boolean initialized = false;
 
-        public void run() { // do the initial pose but otherwise done
+        public void run() { // do the initial pose (get it throught the pose 3d limelight) but otherwise done
             MyShooterOne myShooterOne = new MyShooterOne(hardwareMap);
             activeStates.add(MyVisionState.goal);
             MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
@@ -138,7 +138,7 @@ public class MyVision {
 
                     com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
                             drive.actionBuilder(new Pose2d(0, 0, 0))
-                                    .splineTo(new Vector2d(36, 36), Math.PI/2)
+                                    .splineTo(new Vector2d(-36, 36), Math.PI/2)
                                     .build());
                     //customiz
                     Actions.runBlocking(myShooterOne.addState(MyShooterOne.MyShooterOneState.belt));
