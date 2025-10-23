@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MyIntake {
     private DcMotor intakeMotor;
-    private DigitalChannel beamBreakerSensor;
+    //private DigitalChannel beamBreakerSensor;
 
     public enum IntakeState {intake, pause}
 
@@ -29,8 +29,8 @@ public class MyIntake {
 
     public MyIntake(HardwareMap hardwareMap) {
         this.intakeMotor = hardwareMap.get(DcMotor.class, RobotConfig.intake);
-        this.beamBreakerSensor = hardwareMap.get(DigitalChannel.class, RobotConfig.beamBreaker);
-        beamBreakerSensor.setMode(DigitalChannel.Mode.INPUT);
+        //this.beamBreakerSensor = hardwareMap.get(DigitalChannel.class, RobotConfig.beamBreaker);
+        //beamBreakerSensor.setMode(DigitalChannel.Mode.INPUT);
 
         intakeMechanism = Arrays.asList(intakeMotor);
         for (DcMotor intake : intakeMechanism) {
@@ -54,7 +54,7 @@ public class MyIntake {
     }
 
 
-    public void update() {
+   /* public void update() {
         if (!beamBreakerSensor.getState()) {
             setState(IntakeState.intake);
             setIntakePowers(1.0); //???
@@ -62,5 +62,5 @@ public class MyIntake {
             setState(IntakeState.pause);
             setIntakePowers(0.0);
         }
-    }
+    }*/
 }
