@@ -8,6 +8,11 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2dDual;
+import com.acmerobotics.roadrunner.ProfileParams;
+import com.acmerobotics.roadrunner.Trajectory;
+import com.acmerobotics.roadrunner.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 
@@ -156,8 +161,20 @@ public class MyVision {
                     telemetry.update();
                     Pose2d currentPose = drive.getPoseEstimate();
 
+                    double x = currentPose.position.x;    // or currentPose.getX()
+                    double y = currentPose.position.y;    // or currentPose.getY()
+                    double heading = currentPose.heading.toDouble(); // or currentPose.getHeading()
+
+
+                    /*new TrajectoryBuilder(new TrajectoryBuilderParams(eps,
+                            new ProfileParams(dispResolution, angResolution, eps)),
+                            beginPose, beginEndVel,
+                            baseVelConstraint, baseAccelConstraint,
+                            pose -> new Pose2dDual<>(
+                                    pose.position.x, pose.position.y.unaryMinus(), pose.heading.inverse()));*/
+
                     com.acmerobotics.roadrunner.ftc.Actions.runBlocking(
-                            drive.actionBuilder(new Pose2d(0, 0, 0))
+                            drive.actionBuilder(new Pose2d(x, y, heading))
                                     .splineTo(new Vector2d(36, 36), Math.PI / 2)
                                     .build());
                     //customizable

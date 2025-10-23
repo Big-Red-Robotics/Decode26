@@ -45,9 +45,9 @@ public class MyShooterOne implements Action {
         this.flyingWheelMotor = hardwareMap.get(DcMotor.class, RobotConfig.flyingWheelMotor);
 
 
-        // Initialize intake hardware
+        //intake hardware
         this.intakeMotor = hardwareMap.get(DcMotor.class, RobotConfig.intake);
-        this.beamBreakerSensor = hardwareMap.get(DigitalChannel.class, RobotConfig.beamBreaker);
+        //this.beamBreakerSensor = hardwareMap.get(DigitalChannel.class, RobotConfig.beamBreaker);
         beamBreakerSensor.setMode(DigitalChannel.Mode.INPUT);
 
         shooterOneMotors = Arrays.asList(beltMotor, flyingWheelMotor);
@@ -117,7 +117,7 @@ public class MyShooterOne implements Action {
 
 
         packet.put("Active States", activeOneStates.toString());
-        packet.put("Beam Breaker", beamBreakerSensor.getState());
+        //packet.put("Beam Breaker", beamBreakerSensor.getState());
 
         return false;
     }
