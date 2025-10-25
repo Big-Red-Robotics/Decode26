@@ -20,7 +20,7 @@ public class RobotConfig {
     public static String flyingWheelMotor = "fM";
     public static String beltMotor = "Mb";
 
-    public static String pushingUpServo = "pS";
+    //public static String pushingUpServo = "pS";
 
 
     public static String pushingBeltServo = "pB"; //the one that will push it in the spindexter

@@ -1,2 +1,7 @@
-include ':FtcRobotController'
+// This is the settings.gradle file in your project root
+
+// It tells Gradle to include both the TeamCode and FtcRobotController modules.
 include ':TeamCode'
+include ':FtcRobotController' // <-- This line is essential. Make sure it is present and not commented out.
+
+include ':MeepMeepTesting1'
