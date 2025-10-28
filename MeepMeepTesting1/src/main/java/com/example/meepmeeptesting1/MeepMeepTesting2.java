@@ -13,12 +13,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class MeepMeepTesting1 {
+public class MeepMeepTesting2 {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
 
-        //PPG
+        //PGP
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 18)
@@ -28,16 +28,15 @@ public class MeepMeepTesting1 {
                         .waitSeconds(1)
                         .turn(Math.toRadians(90))//shoot 3p
                         .waitSeconds(3)
-                        .splineTo(new Vector2d(-35, 15), Math.toRadians(180))//if the pattern is ppg
+                        .splineTo(new Vector2d(-35, 15), Math.toRadians(180))//go to the first pattern cuz why not
                         .splineTo(new Vector2d(-60, 15), Math.toRadians(0))//intake
                         .splineTo(new Vector2d(-36, 36), Math.toRadians(135))//shoot
                         .waitSeconds(3)
-                        .splineTo(new Vector2d(-30, -55), Math.toRadians(180))//for the other ppg
-                        .splineTo(new Vector2d(-60, -55), Math.toRadians(180))
-                        .splineTo(new Vector2d(-60, -35), Math.toRadians(0))
-                        .splineTo(new Vector2d(-35, -35), Math.toRadians(0))
+                        .splineTo(new Vector2d(-35, -11), Math.toRadians(180))
+                        .splineTo(new Vector2d(-60, -11), Math.toRadians(0))//intake
                         .splineTo(new Vector2d(-36, 36), Math.toRadians(135))
                         .waitSeconds(3)
+                        .splineTo(new Vector2d(-65, -65), Math.toRadians(180))
                         .build());
 
 

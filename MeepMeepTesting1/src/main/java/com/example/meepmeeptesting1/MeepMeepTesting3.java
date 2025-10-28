@@ -13,12 +13,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class MeepMeepTesting1 {
+public class MeepMeepTesting3 {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
 
-        //PPG
+        //GPP
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 18)
@@ -32,12 +32,9 @@ public class MeepMeepTesting1 {
                         .splineTo(new Vector2d(-60, 15), Math.toRadians(0))//intake
                         .splineTo(new Vector2d(-36, 36), Math.toRadians(135))//shoot
                         .waitSeconds(3)
-                        .splineTo(new Vector2d(-30, -55), Math.toRadians(180))//for the other ppg
-                        .splineTo(new Vector2d(-60, -55), Math.toRadians(180))
+                        .splineTo(new Vector2d(-35, -35), Math.toRadians(180))
                         .splineTo(new Vector2d(-60, -35), Math.toRadians(0))
-                        .splineTo(new Vector2d(-35, -35), Math.toRadians(0))
                         .splineTo(new Vector2d(-36, 36), Math.toRadians(135))
-                        .waitSeconds(3)
                         .build());
 
 
