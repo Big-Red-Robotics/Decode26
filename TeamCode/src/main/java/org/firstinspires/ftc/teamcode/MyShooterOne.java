@@ -35,7 +35,7 @@ public class MyShooterOne implements Action {
     //public MyIntake.IntakeState currentIntakeState = MyIntake.IntakeState.pause;
 
     // Shooter states
-    public enum MyShooterOneState {intake, none, belt, shoot}
+    public enum MyShooterOneState {intake, none, belt, shoot, inversebelt, inverseintake}
 
     public EnumSet<MyShooterOneState> activeOneStates = EnumSet.of(MyShooterOneState.none);
 
@@ -98,9 +98,9 @@ public class MyShooterOne implements Action {
     public boolean run(@NonNull TelemetryPacket packet) {
         // Handle intake state
         if (activeOneStates.contains(MyShooterOneState.intake)) {
-            setIntakePower(1.0); // full power intake - adjust as needed
+            intakeMotor.setPower(1.0); // full power intake - adjust as needed
         } else {
-            setIntakePower(0.0);
+            intakeMotor.setPower(0.0);
         }
 
         if (activeOneStates.contains(MyShooterOneState.belt)) {
@@ -114,6 +114,17 @@ public class MyShooterOne implements Action {
         } else {
             flyingWheelMotor.setPower(0.0);
         }
+        if (activeOneStates.contains(MyShooterOneState.inversebelt)) {
+            beltMotor.setPower(-1.0);
+        } else {
+            beltMotor.setPower(0.0);
+        }
+        if (activeOneStates.contains(MyShooterOneState.inverseintake)) {
+            intakeMotor.setPower(-1.0);
+        } else {
+            intakeMotor.setPower(0.0);
+        }
+
 
 
         packet.put("Active States", activeOneStates.toString());

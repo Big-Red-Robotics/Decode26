@@ -18,7 +18,9 @@ public class TestAutonOne extends LinearOpMode {
         START,
         TRAJ_GOAL,
         SHOOT,
-        TRAJ_ART,
+        TRAJ_PATTERN1,
+        TRAJ_PATTERN2,
+        TRAJ_PATTERN3,
         INTAKE,
         PARK,
         WAIT
@@ -30,6 +32,25 @@ public class TestAutonOne extends LinearOpMode {
 
     Vector2d parkBlue = new Vector2d(10, 10); //coordinates park if blue
     Vector2d parkRed = new Vector2d(-10, -10); //coordinates park if red
+
+
+    Vector2d goalRed = new Vector2d(-36, 36);
+    Vector2d goalBlue = new Vector2d(36, 36);
+
+
+    //this or lowkey just mirror it    ????????? mb
+    //BLUE
+    Vector2d bPattern1 = new Vector2d(-35, 15); //drive forward untill -60
+    Vector2d bPattern2 = new Vector2d(-35, -11);
+    Vector2d bPattern3 = new Vector2d(-35, -35);
+
+
+    //RED
+    Vector2d rPattern1 = new Vector2d(35, 15); //drive forward untill 60
+    Vector2d rPattern2 = new Vector2d(35, -11);
+    Vector2d rPattern3 = new Vector2d(35, -35);
+
+
     boolean parked = false;
 
 
