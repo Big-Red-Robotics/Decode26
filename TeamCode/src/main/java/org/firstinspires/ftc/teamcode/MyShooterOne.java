@@ -80,6 +80,7 @@ public class MyShooterOne implements Action {
         return null;
     }
 
+
     public void removeState(MyShooterOneState state) {
         this.activeOneStates.remove(state);
     }
