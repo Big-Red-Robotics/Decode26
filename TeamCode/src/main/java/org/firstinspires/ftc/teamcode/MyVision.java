@@ -127,7 +127,7 @@ public class MyVision {
 
         public void run() { // do the initial pose (get it throught the pose 3d limelight) but otherwise done
             MyShooterOne myShooterOne = new MyShooterOne(hardwareMap);
-            //MecanumDrive mecanumDrive = new MecanumDrive(HardwareMap hardwareMap);
+            //MecanumDrive mecanumDrive = new MecanumDrive(HardwareMap hardwareMap, Pose2d pose);
             activeStates.add(MyVisionState.goal);
 
             LLResult llResult = limelight.getLatestResult();

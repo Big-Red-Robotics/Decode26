@@ -19,7 +19,8 @@ public class RobotConfig {
 
     public static String flyingWheelMotor = "fM";
     public static String beltMotor = "Mb";
-
+    public static String LLift = "ll";
+    public static  String RLift = "rl";
     //public static String pushingUpServo = "pS";
 
 

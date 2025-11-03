@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Chassis;
 import org.firstinspires.ftc.teamcode.MyIntake;
+import org.firstinspires.ftc.teamcode.MyLift;
 import org.firstinspires.ftc.teamcode.MyShooterOne;
 import org.firstinspires.ftc.teamcode.MyVision;
 
@@ -25,6 +26,7 @@ public class TeleOpOne extends LinearOpMode {
         MyIntake myintake = new MyIntake(hardwareMap);
         MyVision myVision = new MyVision();
         MyShooterOne myShooterOne = new MyShooterOne(hardwareMap);
+        MyLift myLift = new MyLift(hardwareMap);
 
         double forwardSpeed, strafeSpeed, rotateSpeed;
 
@@ -58,7 +60,7 @@ public class TeleOpOne extends LinearOpMode {
             }
             if (gamepad2.right_bumper) myShooterOne.activeOneStates.add(shoot);
 
-            //add the luift on the gamepad1.y
+            if (gamepad2.b) myLift.activeOneStates.add(MyLift.LiftState.up);
         }
 
 
