@@ -30,7 +30,7 @@ public class RobotConfig {
     public static String imu = "imu";
     public static String colorSensor = "color sensor"; //in the spindexter
     public static String beamBreaker = "beam breaker sensor"; //in the intake to detect balls
-    // public static String limelight = "april tag vision";
+    public static String limelight = "april tag vision";
     public static int limelightWidth = 640; //plug in real values
     public static int limelightHeight = 480;
     public static String camera = "webcam";
