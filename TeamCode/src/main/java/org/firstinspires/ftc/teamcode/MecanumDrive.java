@@ -53,8 +53,10 @@ import java.util.List;
 
 @Config
 public final class MecanumDrive {
-    public Pose2d getPoseEstimate() { // THIS IS FOR VISION DO NOT TOUCH NEED THIS FOR LATER
-        return null;
+
+    // actual implementation
+    public Pose2d getPoseEstimate() {
+        return localizer.getPose();
     }
 
     public static class Params {

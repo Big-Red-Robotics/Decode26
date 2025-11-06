@@ -48,7 +48,6 @@ public class MyShooterOne implements Action {
         //intake hardware
         this.intakeMotor = hardwareMap.get(DcMotor.class, RobotConfig.intake);
         //this.beamBreakerSensor = hardwareMap.get(DigitalChannel.class, RobotConfig.beamBreaker);
-        beamBreakerSensor.setMode(DigitalChannel.Mode.INPUT);
 
         shooterOneMotors = Arrays.asList(beltMotor, flyingWheelMotor);
         for (DcMotor shooter : shooterOneMotors) {

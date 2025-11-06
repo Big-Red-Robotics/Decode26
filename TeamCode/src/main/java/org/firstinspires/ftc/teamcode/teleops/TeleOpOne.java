@@ -24,7 +24,7 @@ public class TeleOpOne extends LinearOpMode {
     public void runOpMode() {
         Chassis chassis = new Chassis(hardwareMap);
         MyIntake myintake = new MyIntake(hardwareMap);
-        MyVision myVision = new MyVision();
+        MyVision myVision = new MyVision(hardwareMap);
         MyShooterOne myShooterOne = new MyShooterOne(hardwareMap);
         MyLift myLift = new MyLift(hardwareMap);
 

@@ -17,7 +17,7 @@ public class FirstRoadRunnerAuton extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MyVision vision = new MyVision();
+        MyVision vision = new MyVision(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         waitForStart();
