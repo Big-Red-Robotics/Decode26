@@ -12,25 +12,25 @@ public class RobotConfig {
     public static InitialSide initialSide = InitialSide.LEFT; //or RIGHT
 
     public static String motorFL = "dFL", motorBL = "dBL", motorFR = "dFR", motorBR = "dBR";
-    public static String intake = "mi";
-    public static String shooterMotorL = "sL";
+    public static String intake = "intake";
+    //public static String shooterMotorL = "sL";
 
-    public static String shooterMotorR = "sR";
+    //public static String shooterMotorR = "sR";
 
-    public static String flyingWheelMotor = "fM";
-    public static String beltMotor = "Mb";
-    public static String LLift = "ll";
-    public static  String RLift = "rl";
+    public static String flyingWheelMotor = "launcher";
+    public static String beltMotor = "belt";
+    public static String LLift = "armExL";
+    public static  String RLift = "armExR";
     //public static String pushingUpServo = "pS";
 
 
-    public static String pushingBeltServo = "pB"; //the one that will push it in the spindexter
-    public static String angleHoodServoL = "sL", angleHoodServoR = "sR";
-    public static String spindexterServoLeft = "ssL", spindexterServoRight = "ssR", spindexterServoBack = "ssB";
-    public static String turret = "turret";
+    //public static String pushingBeltServo = "pB"; //the one that will push it in the spindexter
+   // public static String angleHoodServoL = "sL", angleHoodServoR = "sR";
+    //public static String spindexterServoLeft = "ssL", spindexterServoRight = "ssR", spindexterServoBack = "ssB";
+    //public static String turret = "turret";
     public static String imu = "imu";
-    public static String colorSensor = "color sensor"; //in the spindexter
-    public static String beamBreaker = "beam breaker sensor"; //in the intake to detect balls
+    //public static String colorSensor = "color sensor"; //in the spindexter
+   // public static String beamBreaker = "beam breaker sensor"; //in the intake to detect balls
     public static String limelight = "april tag vision";
     public static int limelightWidth = 640; //plug in real values
     public static int limelightHeight = 480;
