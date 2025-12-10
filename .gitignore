@@ -1,4 +1,5 @@
 # Built application files
+*.zip
 *.apk
 *.aar
 *.ap_
@@ -23,6 +24,10 @@ out/
 # Gradle files
 .gradle/
 build/
+caches/
+wrapper/
+daemon/
+native/
 
 # Local configuration file (sdk path, etc)
 local.properties

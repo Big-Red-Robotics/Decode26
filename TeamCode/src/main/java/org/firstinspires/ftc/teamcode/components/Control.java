@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 public class Control {
     // === Tunable constants ===
     // Flip the sign (+/-) here if any motor runs the wrong direction due to wiring.
-    private static final double INTAKE_POWER   = 1.0;   // nominal intake speed
+    private static final double INTAKE_POWER   = -1.0;   // nominal intake speed
     private static final double BELT_POWER     = 1.0;   // nominal belt speed
     private static final double LAUNCHER_POWER = 0.5;   // nominal launcher speed
 
@@ -188,6 +188,7 @@ public class Control {
                 armExtensionL.setPower(1);
             }
             else {
+                // I dont understand why d
                 armExtensionL.setPower(1);
                 armExtensionR.setPower(1);
             }

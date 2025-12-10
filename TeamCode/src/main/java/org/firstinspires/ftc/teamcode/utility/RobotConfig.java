@@ -17,7 +17,7 @@ public class RobotConfig {
     public static String wrist = "ldservo", intake = "rdservo";
 
     /*
-    Decode stuff
+     * Decode stuff
      */
     public static String decode_intake = "intake", belt = "belt", launcher = "launcher";
 
@@ -31,12 +31,19 @@ public class RobotConfig {
 
     public static String RDServo = "rdservo";
 
-    //unused
+    // unused
     public static String imu = "imu";
     public static String distanceSensor = "distanceSensor";
 
-    //Webcam: Logitech HD Webcam C270
+    // Webcam: Logitech HD Webcam C270
     public static String cameraName = "Webcam 1";
     public static int cameraWidth = 640;
     public static int cameraHeight = 480;
+
+    public static String limelightName = "Limelight";
+    /*
+     * Configure this to match the pipeline index on the Limelight that is set up
+     * for QR/Barcode decoding (set in the Limelight web UI).
+     */
+    public static int limelightQrPipeline = 0;
 }
