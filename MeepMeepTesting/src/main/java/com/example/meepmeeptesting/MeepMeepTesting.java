@@ -30,29 +30,34 @@ public class MeepMeepTesting {
                 .setDimensions(18, 18)
                 .build();
 
-        double angle = 0.0;
-        Vector2d ArtifactLocation = new Vector2d(0,0);
-        switch (pattern){
-            case GPP:
-                ArtifactLocation = new Vector2d(-13,-30);
-                angle = 210;
-                break;
-            case PPG:
-                break;
-            case PGP:
-                break;
-        }
-
-
+        // Trajectory from testautonshi.java
+        Pose2d beginPose = new Pose2d(new Vector2d(-70, 24), Math.toRadians(0));
 
         // Define the movement trajectory
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-(70-9), -18, 0)).setTangent(0)
-                .strafeToLinearHeading(new Vector2d(-38, -34), Math.toRadians(45))
-                        .strafeToLinearHeading(ArtifactLocation,angle)
+        myBot.runAction(myBot.getDrive().actionBuilder(beginPose)
+                .lineToXLinearHeading(-30, Math.toRadians(135))
+                .waitSeconds(1.5) //shooting here
+                .splineToSplineHeading(new Pose2d(-11, 30, Math.toRadians(90)), Math.toRadians(0))
+                .waitSeconds(0.05)
+                .lineToY(37)
+                .waitSeconds(0.2)
+                .lineToY(42)
+                .waitSeconds(0.2)
+                .lineToY(47)
+                .splineToSplineHeading(new Pose2d(-30, 24, Math.toRadians(135)), Math.toRadians(180))
+                .waitSeconds(1) //Shooting point: (-30, 24) shooting here
+
+                .splineToSplineHeading(new Pose2d(12, 30, Math.toRadians(90)), Math.toRadians(0)) //next position
+                .waitSeconds(0.2)
+                .lineToY(37)
+                .waitSeconds(0.3)
+                .lineToY(42)
+                .waitSeconds(0.3)
+                .lineToY(47)
+                .splineToSplineHeading(new Pose2d(-30, 24, Math.toRadians(135)), Math.toRadians(180))
+                .waitSeconds(1) //shooting here
+                .splineToSplineHeading(new Pose2d(37, 33, Math.toRadians(0)), Math.toRadians(90))
                 .build());
-        /*
-        shoot code ouhewigrbyvuihorjl3n
-         */
 
         // Display the field with coordinates and background styling
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)

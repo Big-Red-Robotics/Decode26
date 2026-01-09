@@ -49,7 +49,7 @@ public class BasicLeftAutonomous extends LinearOpMode {
 //        if (isRed) initialPose = new Pose2d(-24, 60, Math.toRadians(-90));
 //        else initialPose = new Pose2d(24, -60, Math.toRadians(90));
         initialPose = new Pose2d(0, 0, 0);
-        drive.pose = initialPose;
+        drive.localizer.setPose(initialPose);
 
         //go to place
         Action tab1 = drive.actionBuilder(initialPose)
