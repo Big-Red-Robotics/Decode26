@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "skibidisigma67opmode", group = "Linear Opmode")
 public class skibidisigma67rizz extends LinearOpMode {
@@ -25,6 +26,10 @@ public class skibidisigma67rizz extends LinearOpMode {
     double intakePower = 1.0;
 
     int LIFT_HEIGHT = 3000;
+
+    // Declutter state machine
+    private ElapsedTime declutterTimer = new ElapsedTime();
+    private int declutterState = 0; // 0 = idle, 1 = shooter running, 2 = belt running
 
     DcMotorSimple.Direction LEFT_SIDE_DIR = DcMotorSimple.Direction.REVERSE;
     DcMotorSimple.Direction RIGHT_SIDE_DIR = DcMotorSimple.Direction.FORWARD;
@@ -98,52 +103,77 @@ public class skibidisigma67rizz extends LinearOpMode {
             rightFront.setPower(frontRightPower * driveSpeedMultiplier);
             rightBack.setPower(backRightPower * driveSpeedMultiplier);
 
-            if (gamepad1.a) {
+            if (gamepad2.a) {
                 shooterMotor.setPower(0.7);
-            } else if (gamepad1.b) {
+            } else if (gamepad2.b) {
                 shooterMotor.setPower(0.8);
-            } else if (gamepad1.dpad_right) {
+            } else if (gamepad2.dpad_right) {
                 shooterMotor.setPower(0.0);
             }
 
-            if (gamepad1.x) {
-                LliftMotor.setTargetPosition(LIFT_HEIGHT);
-                RliftMotor.setTargetPosition(LIFT_HEIGHT);
 
-                LliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                LliftMotor.setPower(1.0);
-                RliftMotor.setPower(1.0);
+//            if (gamepad1.x) {
+//                LliftMotor.setTargetPosition(LIFT_HEIGHT);
+//                RliftMotor.setTargetPosition(LIFT_HEIGHT);
+//
+//                LliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                RliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//                LliftMotor.setPower(1.0);
+//                RliftMotor.setPower(1.0);
+//            }
+
+//            if (gamepad1.y) {
+//                LliftMotor.setTargetPosition(0);
+//                RliftMotor.setTargetPosition(0);
+//
+//                LliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                RliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//                LliftMotor.setPower(0.8);
+//                RliftMotor.setPower(0.8);
+//            }
+
+            if (declutterState == 0) { // Only allow manual belt control when not decluttering
+                if (gamepad2.right_trigger > 0.1) {
+                    beltMotor.setPower(beltSpeed);
+                } else if (gamepad2.right_bumper) {
+                    beltMotor.setPower(-beltSpeed);
+                } else {
+                    beltMotor.setPower(0);
+                }
             }
 
-            if (gamepad1.y) {
-                LliftMotor.setTargetPosition(0);
-                RliftMotor.setTargetPosition(0);
-
-                LliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                RliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                LliftMotor.setPower(0.8);
-                RliftMotor.setPower(0.8);
-            }
-
-            if (gamepad1.right_trigger > 0.1) {
-                beltMotor.setPower(beltSpeed);
-            } else if (gamepad1.right_bumper) {
-                beltMotor.setPower(-beltSpeed);
-            } else {
-                beltMotor.setPower(0);
-            }
-
-            if (gamepad1.left_trigger > 0.1) {
+            if (gamepad2.left_trigger > 0.1) {
                 intakeServo.setPower(intakePower);
-            } else if (gamepad1.left_bumper) {
+            } else if (gamepad2.left_bumper) {
                 intakeServo.setPower(-intakePower);
             } else {
                 intakeServo.setPower(0);
             }
 
+            // Declutter state machine (runs concurrently)
+            if (gamepad2.x && declutterState == 0) {
+                // Start declutter sequence
+                declutterState = 1;
+                declutterTimer.reset();
+                shooterMotor.setPower(1.0);
+            }
+
+            if (declutterState == 1 && declutterTimer.milliseconds() >= 500) {
+                // After 0.5s, stop shooter and start belt backwards
+                shooterMotor.setPower(0);
+                beltMotor.setPower(-beltSpeed);
+                declutterState = 2;
+                declutterTimer.reset();
+            }
+
+            if (declutterState == 2 && declutterTimer.milliseconds() >= 1000) {
+                // After 1s, stop belt and end sequence
+                beltMotor.setPower(0);
+                declutterState = 0;
+            }
             telemetry.addData("liftup", LliftMotor.getTargetPosition());
             telemetry.addData("Lift c", LliftMotor.getCurrentPosition());
             telemetry.addData("belton", beltMotor.getPower());

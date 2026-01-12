@@ -10,7 +10,7 @@ public class RobotConfig {
     public static TeamColor teamColor = TeamColor.BLUE;
     public static InitialSide initialSide = InitialSide.LEFT;
 
-    public static String motorFL = "dFL", motorFR = "dFR", motorBL = "dBL", motorBR = "dBR";
+    public static String motorFL = "LF", motorFR = "RF", motorBL = "LB", motorBR = "RB";
     public static String arm = "arm";
 
     public static String claw = "claw";
