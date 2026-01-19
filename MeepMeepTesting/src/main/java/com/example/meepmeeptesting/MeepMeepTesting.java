@@ -30,7 +30,7 @@ public class MeepMeepTesting {
                 .setDimensions(18, 18)
                 .build();
 
-        // Trajectory from testautonshi.java
+        // Trajectory from NetZoneAutonomous.java
         Pose2d beginPose = new Pose2d(new Vector2d(-70, 24), Math.toRadians(0));
 
         // Define the movement trajectory
