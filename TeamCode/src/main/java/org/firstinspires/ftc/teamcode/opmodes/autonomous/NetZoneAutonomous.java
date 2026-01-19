@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.components.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
-@Autonomous (name="Skibidi Rizzy")
-public class testautonshi extends LinearOpMode {
+@Autonomous (name="Net Zone Autonomous")
+public class NetZoneAutonomous extends LinearOpMode {
 
     private DcMotor beltMotor = null;
     private DcMotor shooterMotor = null;

@@ -66,6 +66,8 @@ public class MeepMeepTesting {
          * Phase 4: Park in BASE (10 points)
          *   - Return to BASE zone for endgame points
          */
+        // Trajectory from NetZoneAutonomous.java
+        Pose2d beginPose = new Pose2d(new Vector2d(-70, 24), Math.toRadians(0));
 
         // Starting pose: Blue Alliance, near launch line
         // Positioned to face the GOAL (heading 0 = facing +X direction)
