@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,8 +25,8 @@ public class Arm {
     public final ServoImplEx claw;
     private final CRServo leftDServo;
     private final CRServo rightDServo;
-    private final DcMotor armExtensionR;
-    private final DcMotor armExtensionL;
+    private final DcMotorEx armExtensionR;
+    private final DcMotorEx armExtensionL;
 //    public final TouchSensor slideZeroReset;
 
     public static final int VERY_LOW = 1600;
@@ -34,6 +35,16 @@ public class Arm {
     public static final int GROUND = 0;
     public static final double dspeed = 0.5;
 
+    // PIDF coefficients for arm extension motors (tune these values for your robot)
+    private static final double ARM_EX_P = 10.0;
+    private static final double ARM_EX_I = 0.0;
+    private static final double ARM_EX_D = 0.0;
+    private static final double ARM_EX_F = 0.0;
+
+    // Synchronization parameters
+    private static final int SYNC_TOLERANCE = 50;  // Max allowed encoder tick difference
+    private static final double SYNC_CORRECTION_FACTOR = 0.3;  // How much to slow the faster motor
+
     public boolean hang = false;
 
     public Arm(HardwareMap hardwareMap){
@@ -41,8 +52,8 @@ public class Arm {
         this.arm = hardwareMap.get(DcMotorEx.class, RobotConfig.arm);
         this.claw = hardwareMap.get(ServoImplEx.class, RobotConfig.claw);
         this.wrist = hardwareMap.get(CRServo.class, RobotConfig.wrist);
-        this.armExtensionR = hardwareMap.get(DcMotor.class, RobotConfig.armExtensionR);
-        this.armExtensionL = hardwareMap.get(DcMotor.class, RobotConfig.armExtensionL);
+        this.armExtensionR = hardwareMap.get(DcMotorEx.class, RobotConfig.armExtensionR);
+        this.armExtensionL = hardwareMap.get(DcMotorEx.class, RobotConfig.armExtensionL);
         this.intake = hardwareMap.get(CRServo.class, RobotConfig.intake);
         this.rightDServo = hardwareMap.get(CRServo.class, RobotConfig.RDServo);
         this.leftDServo = hardwareMap.get(CRServo.class, RobotConfig.LDServo);
@@ -52,6 +63,11 @@ public class Arm {
         armExtensionL.setDirection(DcMotorSimple.Direction.FORWARD);
         armExtensionR.setDirection(DcMotorSimple.Direction.REVERSE);
 //        arm.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Configure matching PIDF coefficients for synchronized movement
+        PIDFCoefficients pidfCoeffs = new PIDFCoefficients(ARM_EX_P, ARM_EX_I, ARM_EX_D, ARM_EX_F);
+        armExtensionL.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidfCoeffs);
+        armExtensionR.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidfCoeffs);
     }
 
 
@@ -149,15 +165,35 @@ public class Arm {
     }
 
     public void  update() {
-        //armExtension
-        if (armExtensionL.getTargetPosition() == 0 && armExtensionR.getTargetPosition() == 0){
+        //armExtension with synchronized movement
+        if (areArmExtensionsBusy()) {
             setArmExtensionMode(DcMotor.RunMode.RUN_TO_POSITION);
-            if(areArmExtensionsBusy()) setArmExtensionPower(1.0);
-            else setArmExtensionPower(0.0);
-        } else if(areArmExtensionsBusy()) {
-            setArmExtensionMode(DcMotor.RunMode.RUN_TO_POSITION);
-            setArmExtensionPower(1.0);
-        } else setArmExtensionPower(0.0);
+
+            // Get current positions
+            int leftPos = armExtensionL.getCurrentPosition();
+            int rightPos = armExtensionR.getCurrentPosition();
+            int posDifference = leftPos - rightPos;
+
+            // Calculate synchronized power for each motor
+            double leftPower = 1.0;
+            double rightPower = 1.0;
+
+            if (Math.abs(posDifference) > SYNC_TOLERANCE) {
+                // One motor is ahead - slow it down
+                if (posDifference > 0) {
+                    // Left is ahead, slow it down
+                    leftPower = 1.0 - SYNC_CORRECTION_FACTOR;
+                } else {
+                    // Right is ahead, slow it down
+                    rightPower = 1.0 - SYNC_CORRECTION_FACTOR;
+                }
+            }
+
+            armExtensionL.setPower(leftPower);
+            armExtensionR.setPower(rightPower);
+        } else {
+            setArmExtensionPower(0.0);
+        }
 
         //arm (lift)
         if (arm.isBusy()) arm.setPower(1.0);
@@ -190,6 +226,11 @@ public class Arm {
     public double getArmExPower() {return (armExtensionL.getPower() + armExtensionR.getPower()) / 2.0;}
     public int getArmExPosition() {return (armExtensionL.getCurrentPosition() + armExtensionR.getCurrentPosition()) / 2;}
     public int getArmExTargetPosition() {return (armExtensionL.getTargetPosition() + armExtensionR.getTargetPosition()) / 2;}
+
+    // Individual motor position getters for debugging synchronization
+    public int getArmExLeftPosition() {return armExtensionL.getCurrentPosition();}
+    public int getArmExRightPosition() {return armExtensionR.getCurrentPosition();}
+    public int getArmExPositionDifference() {return armExtensionL.getCurrentPosition() - armExtensionR.getCurrentPosition();}
 
     private void setArmExtensionPower(double power) {
         armExtensionL.setPower(power);
@@ -238,15 +279,35 @@ public class Arm {
             if (!initialized) {
                 setArmExtensionPosition(targetPosition);
                 Log.d("SET ARMEX POS", String.valueOf(getArmExTargetPosition()));
-                setArmExtensionPower(1.0);
                 initialized = true;
             }
 
             // checks lift's current position
             packet.put("current ArmEx position", getArmExPosition());
             packet.put("target ArmEx position", getArmExTargetPosition());
+            packet.put("ArmEx L position", armExtensionL.getCurrentPosition());
+            packet.put("ArmEx R position", armExtensionR.getCurrentPosition());
+
             if (areArmExtensionsBusy()) {
-                // true causes the action to rerun
+                // Apply synchronized power control
+                int leftPos = armExtensionL.getCurrentPosition();
+                int rightPos = armExtensionR.getCurrentPosition();
+                int posDifference = leftPos - rightPos;
+
+                double leftPower = 1.0;
+                double rightPower = 1.0;
+
+                if (Math.abs(posDifference) > SYNC_TOLERANCE) {
+                    if (posDifference > 0) {
+                        leftPower = 1.0 - SYNC_CORRECTION_FACTOR;
+                    } else {
+                        rightPower = 1.0 - SYNC_CORRECTION_FACTOR;
+                    }
+                }
+
+                armExtensionL.setPower(leftPower);
+                armExtensionR.setPower(rightPower);
+
                 Log.d("target ArmEx position", String.valueOf(getArmExTargetPosition()));
                 Log.d("current ArmEx position", String.valueOf(getArmExPosition()));
                 return true;
