@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "skibidisigma67opmode", group = "Linear Opmode")
-public class skibidisigma67rizz extends LinearOpMode {
+@TeleOp(name = "Competition TeleOp", group = "Linear Opmode")
+public class CompetitionTeleOp extends LinearOpMode {
 
     private DcMotor leftFront = null;
     private DcMotor leftBack = null;
