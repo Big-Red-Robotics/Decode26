@@ -48,14 +48,14 @@ public class TeleOpOne extends LinearOpMode {
             if (gamepad2.x) myVision.activeStates.add(MyVision.MyVisionState.goal);
             if (gamepad2.left_bumper) {
                 myShooterOne.activeOneStates.addAll(EnumSet.of(
-                        intake,
+                        //intake,
                         belt
                 ));
             }
             if (gamepad2.left_trigger > 0) {
                 myShooterOne.activeOneStates.addAll(EnumSet.of(
-                        MyShooterOne.MyShooterOneState.inversebelt,
-                        MyShooterOne.MyShooterOneState.inverseintake
+                        MyShooterOne.MyShooterOneState.inversebelt
+                        //MyShooterOne.MyShooterOneState.inverseintake
                 ));
             }
             if (gamepad2.right_bumper) myShooterOne.activeOneStates.add(shoot);
